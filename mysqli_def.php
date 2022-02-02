@@ -6,4 +6,4 @@ $DB = 'test';
 
 $mysqli = mysqli_connect($host, $user_DB, $pass, $DB);
 
-if ($mysqli->connect_errno) exit("Соединение не удалось");
+$mysqli->connect_errno ? print("Connection error!") : print('Connection to DB success!');
