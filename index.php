@@ -1,15 +1,11 @@
 <?php
     include_once('mysqli_def.php');
 
-    function set_params() {
-        if (isset($_GET['params'])) {
-            $params = explode( "/", $_GET['params']);
-            $city = $params[0];
-            $donut = $params[1];
-        }
+    if (isset($_GET['params'])) {
+        $params = explode( "/", $_GET['params']);
+        $city = $params[0];
+        $donut = $params[1];
     }
-
-    set_params();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,8 +18,6 @@
 </head>
 <body>
     <?php
-        $mysqli->connect_errno ? print('Connection error!') : print('Connection to DB success!');
-
         $cities = $mysqli->query("SELECT * FROM cities");
         echo "<nav>";
         while ($row = mysqli_fetch_assoc($cities)) {
