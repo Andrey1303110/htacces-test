@@ -38,9 +38,9 @@
                 $donuts = $_SESSION['connect']->query("SELECT * FROM `donut_types`");
                 echo "<div class='donuts'>";
                     while ($row = mysqli_fetch_assoc($donuts)) {
-                        echo "<a href=/".$city.'/'.$row['type']."><div>";
-                            echo "<p>".$row['type']."</p>";
-                        echo "</div></a>";
+                        echo "<a href=/".$city.'/'.$row['type'].">";
+                            echo "<img src=/img/".$row['id'].".webp>";
+                        echo "</a>";
                     }
                 echo "</div>";
             }
