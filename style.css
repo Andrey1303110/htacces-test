@@ -1,3 +1,8 @@
+p {
+    margin-block-start: .5em;
+    margin-block-end: .5em;
+}
+
 nav {
     width: 50%;
     height: 45px;
@@ -30,7 +35,7 @@ a {
 }
 
 .city, .donut {
-    width: 400px;
+    width: 600px;
     margin: 0 auto;
     text-align: center;
     font-size: xx-large;
