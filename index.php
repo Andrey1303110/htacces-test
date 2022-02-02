@@ -1,11 +1,8 @@
 <?php
-    include_once('mysqli_def.php');
+    error_reporting(E_ALL);
+    ini_set("display_errors", 1);
 
-    if (isset($_GET['params'])) {
-        $params = explode( "/", $_GET['params']);
-        $city = $params[0];
-        $donut = $params[1];
-    }
+    include_once('mysqli_def.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,26 +15,47 @@
 </head>
 <body>
     <?php
-        $cities = $mysqli->query("SELECT * FROM cities");
+        $cities = $_SESSION['connect']->query("SELECT * FROM `cities`");
         echo "<nav>";
-        while ($row = mysqli_fetch_assoc($cities)) {
-            echo "<a href=/".$row['city_name']."><div>";
-                echo "<p>".$row['city_name']."</p>";
-            echo "</div></a>";
-        }
+            while ($row = mysqli_fetch_assoc($cities)) {
+                echo "<a href=/".$row['city_name']."><div>";
+                    echo "<p>".$row['city_name']."</p>";
+                echo "</div></a>";
+            }
         echo "</nav>";
 
-        function city_print($str) {
-            echo "<div><p>Your city is ". $str."</p>";
-        }
+        if (isset($_GET['params'])) {
+            $params = explode( "/", $_GET['params']);
+            count($params) >= 1 ? $city_name = $params[0] : $city_name = false;
+            count($params) >= 2 ? $donut_name = $params[1] : $donut_name = false;
 
-        function donut_print($str) {
-            echo "<div><p>Your donut is ". $str."</p>";
-            echo "<img src=".strtolower($str).">";
-        }
+            function city_print($str) {
+                echo "<div class='city'><p>Your city is ". $str."</p>";
+                echo "<img src=/img/".strtolower($str).".jpg></div>";
+            }
 
-        $city ? city_print($city) : false;
-        $donut ? donut_print($donut) : false;
+            function donut_link_print($city) {
+                $donuts = $_SESSION['connect']->query("SELECT * FROM `donut_types`");
+                echo "<div class='donuts'>";
+                    while ($row = mysqli_fetch_assoc($donuts)) {
+                        echo "<a href=/".$city.'/'.$row['type']."><div>";
+                            echo "<p>".$row['type']."</p>";
+                        echo "</div></a>";
+                    }
+                echo "</div>";
+            }
+
+            function donut_print($str) {
+                $result = $_SESSION['connect']->query("SELECT * FROM `donut_types` WHERE `type` LIKE '%{$str}%' ");
+                $donut = $result->fetch_assoc();
+                echo "<div class='donut'><p>Your donut is ". $donut['type']."</p>";
+                echo "<img src=/img/".$donut['id'].".webp></div>";
+            }
+    
+            $city_name ? city_print($city_name) : false;
+            $city_name ? donut_link_print($city_name) : false;
+            $donut_name ? donut_print($donut_name) : false;
+        }
     ?>
 </body>
 </html>
