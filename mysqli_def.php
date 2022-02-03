@@ -1,6 +1,6 @@
 <?php
 $host = 'localhost';
-$user_DB = 'devcot';
+$user_DB = 'devcot_1';
 $pass = 'Kxdi3gwgq2kBWJ9i';
 $DB = 'devcot_db1';
 
