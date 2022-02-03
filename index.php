@@ -17,11 +17,14 @@
     <?php
         $cities = $_SESSION['connect']->query("SELECT * FROM `cities`");
         echo "<nav>";
-            while ($row = mysqli_fetch_assoc($cities)) {
-                echo "<a href=/".$row['city_name']."><div>";
-                    echo "<p>".$row['city_name']."</p>";
-                echo "</div></a>";
+            if ($cities) {
+                while ($row = mysqli_fetch_assoc($cities)) {
+                    echo "<a href=/".$row['city_name']."><div>";
+                        echo "<p>".$row['city_name']."</p>";
+                    echo "</div></a>";
+                }
             }
+            else echo "No data in Database!";
         echo "</nav>";
 
         if (isset($_GET['params'])) {
