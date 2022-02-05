@@ -15,50 +15,74 @@
 </head>
 <body>
     <?php
-        $cities = $_SESSION['connect']->query("SELECT * FROM `cities`");
-        echo "<nav>";
+        function printAll($variables) {
+            $cities = $_SESSION['connect']->query("SELECT * FROM `cities`");
             if ($cities) {
+                echo "<nav>";
                 while ($row = mysqli_fetch_assoc($cities)) {
-                    echo "<a href=/".$row['city_name']."><div>";
-                        echo "<p>".$row['city_name']."</p>";
+                    if (!is_null($variables[1])) {
+                        echo "<a href=/".$row['city_name'].'/'.$variables[1]."><div>"; 
+                    }
+                    else {
+                        echo "<a href=/".$row['city_name']."><div>";
+                    }
+                    echo "<p>".$row['city_name']."</p>";
                     echo "</div></a>";
                 }
+                echo "</nav>";
             }
             else echo "No data in Database!";
-        echo "</nav>";
 
-        if (isset($_GET['params'])) {
-            $params = explode( "/", $_GET['params']);
-            count($params) >= 1 ? $city_name = $params[0] : $city_name = false;
-            count($params) >= 2 ? $donut_name = $params[1] : $donut_name = false;
+            $donuts = $_SESSION['connect']->query("SELECT * FROM `donut_types`");
 
-            function city_print($str) {
-                echo "<div class='city'><p>Your city is ". $str."</p>";
-                echo "<img src=/img/".strtolower($str).".jpg></div>";
-            }
+            if (!is_null($variables[0])) {
+                // Проверка или есть такой город, если нет - редирект на индекс
+                echo "<div class='city'><p>Your city is ". $variables[0]."</p>";
+                echo "<img src=/img/".strtolower($variables[0]).".jpg></div>";
 
-            function donut_link_print($city) {
-                $donuts = $_SESSION['connect']->query("SELECT * FROM `donut_types`");
                 echo "<div class='donuts'>";
-                    while ($row = mysqli_fetch_assoc($donuts)) {
-                        echo "<a href=/".$city.'/'.$row['type'].">";
-                            echo "<img src=/img/".$row['id'].".webp>";
-                        echo "</a>";
-                    }
+                while ($row = mysqli_fetch_assoc($donuts)) {
+                    echo "<a href=/".$variables[0].'/'.$row['type'].">";
+                    echo "<img src=/img/".$row['id'].".webp>";
+                    echo "</a>";
+                }
                 echo "</div>";
             }
 
-            function donut_print($str) {
-                $result = $_SESSION['connect']->query("SELECT * FROM `donut_types` WHERE `type` LIKE '%{$str}%' ");
+            if (is_null($variables[0])) {
+                echo "<div class='donuts'>";
+                while ($row = mysqli_fetch_assoc($donuts)) {
+                    echo "<a href=/".$row['type'].">";
+                    echo "<img src=/img/".$row['id'].".webp>";
+                    echo "</a>";
+                }
+                echo "</div>";
+            }
+
+            if (!is_null($variables[1])) {
+                $result = $_SESSION['connect']->query("SELECT * FROM `donut_types` WHERE `type` LIKE '%{$variables[1]}%' ");
                 $donut = $result->fetch_assoc();
                 echo "<div class='donut'><p>Your donut is ". $donut['type']."</p>";
                 echo "<img src=/img/".$donut['id'].".webp></div>";
-            }
-    
-            $city_name ? city_print($city_name) : false;
-            $city_name ? donut_link_print($city_name) : false;
-            $donut_name ? donut_print($donut_name) : false;
+            }   
         }
+
+        if (isset($_GET['params'])) {
+            $params = explode( "/", $_GET['params']);
+            $result = $_SESSION['connect']->query("SELECT * FROM `cities` WHERE `city_name` LIKE '%{$params[0]}%' ")->fetch_assoc();
+            if (!is_null($result)) {
+                count($params) >= 1 ? $city_name = $params[0] : $city_name = NULL;
+                count($params) >= 2 ? $donut_name = $params[1] : $donut_name = NULL;
+                $params = [$city_name, $donut_name];
+            }
+            else {
+                $donut_name = $params[0];
+                $params = [NULL, $donut_name];
+            }
+        }
+        else $params = [NULL, NULL];
+
+        printAll($params);
     ?>
 </body>
 </html>
